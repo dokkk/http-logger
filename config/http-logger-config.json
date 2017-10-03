@@ -1,0 +1,47 @@
+{
+  "log4js":
+  {
+    "appenders": {
+      "out": { "type": "console" },
+      "error": { "type": "dateFile", "filename": "logs_api/errors/error", "pattern":".yyyy-MM-dd.log","alwaysIncludePattern":true},
+      "default": { "type": "dateFile", "filename": "logs_api/defaults/default", "pattern":".yyyy-MM-dd.log","alwaysIncludePattern":true},
+      "debug": { "type": "dateFile", "filename": "logs_api/debugs/debug", "pattern":".yyyy-MM-dd.log","alwaysIncludePattern":true}
+    },
+    "categories": {
+      "default": { "appenders": ["out", "default"], "level": "info" },
+      "error": { "appenders": ["out", "error"], "level": "error" },
+      "debug": { "appenders": ["out", "debug"], "level": "debug" }
+    }
+  },
+  "api":
+  {
+    "url": "/api",
+    "end_points":
+    {
+      "errors":
+      {
+        "url": "/errors",
+        "verbs": ["GET", "POST"],
+        "log_category": "error",
+        "source": "errors"
+      },
+      "debugs":
+      {
+        "url": "/debugs",
+        "verbs": ["GET", "POST"],
+        "log_category": "debug",
+        "source": "debugs"
+      }
+    }
+  },
+  "resource":
+  {
+    "type": "file",
+    "base": "C:\\xampp\\htdocs\\http-logger\\logs_api",
+    "sources":
+    {
+      "errors": "/errors",
+      "debugs": "/debugs"
+    }
+  }
+}

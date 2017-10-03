@@ -1,0 +1,25 @@
+{
+  "name": "http-logger",
+  "version": "1.0.0",
+  "engines": {
+    "node": "v8.4.0",
+    "npm":  "4.2.0"
+  }
+  "description": "A tool for logging over http requests",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "http",
+    "logger",
+    "tool"
+  ],
+  "author": "Domenico Caruso",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.15.5",
+    "log4js": "^2.3.4"
+  }
+}

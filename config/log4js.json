@@ -1,0 +1,13 @@
+{
+  "appenders": {
+    "out": { "type": "console" },
+    "error": { "type": "dateFile", "filename": "logs_internal/error", "pattern":".yyyy-MM-dd.log","alwaysIncludePattern":true},
+    "default": { "type": "dateFile", "filename": "logs_internal/default", "pattern":".yyyy-MM-dd.log","alwaysIncludePattern":true},
+    "debug": { "type": "dateFile", "filename": "logs_internal/debug", "pattern":".yyyy-MM-dd.log","alwaysIncludePattern":true}
+  },
+  "categories": {
+    "default": { "appenders": ["out", "default"], "level": "info" },
+    "error": { "appenders": ["out", "error"], "level": "error" },
+    "debug": { "appenders": ["out", "debug"], "level": "debug" }
+  }
+}

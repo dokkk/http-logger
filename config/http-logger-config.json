@@ -13,8 +13,19 @@
       "debug": { "appenders": ["out", "debug"], "level": "debug" }
     }
   },
+  "resource":
+  {
+    "type": "file",
+    "base": "C:\\xampp\\htdocs\\http-logger\\logs_api",
+    "sources":
+    {
+      "errors": "/errors",
+      "debugs": "/debugs"
+    }
+  },
   "api":
   {
+    "port": "8081",
     "url": "/api",
     "end_points":
     {
@@ -32,16 +43,6 @@
         "log_category": "debug",
         "source": "debugs"
       }
-    }
-  },
-  "resource":
-  {
-    "type": "file",
-    "base": "C:\\xampp\\htdocs\\http-logger\\logs_api",
-    "sources":
-    {
-      "errors": "/errors",
-      "debugs": "/debugs"
     }
   }
 }

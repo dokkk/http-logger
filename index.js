@@ -136,6 +136,6 @@ function getResources(source)
   })
 }
 
-var server = app.listen(8081, function() {
-    console.log('Express is listening to http://localhost:8081');
+var server = app.listen(config.api.port, function() {
+    console.log('http-logger is listening on port ' + config.api.port);
 });

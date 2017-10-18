@@ -51,14 +51,15 @@ function createEndPoints(end_point)
     app.get(config.api.url + config.api.end_points[end_point].url, function(req, res)
     {
       //config.api.end_points[end_point].source value is the end_point in config.resource.sources
-      buildAndSendResourcesList(req, res, config.resource.sources[config.api.end_points[end_point].source], 200);
+      var resourceLinks = buildResourcesLinks(req, res, config.resource.sources[config.api.end_points[end_point].source]);
+      res.status(200).json(resourceLinks);
     });
 
     if(config.api.end_points[end_point].single)
     {
       app.get(config.api.url + config.api.end_points[end_point].url + "/:" + config.api.end_points[end_point].single, function(req, res)
       {
-        //config.api.end_points[end_point].source value is the end_point in config.resource.sources
+        //config.api.end_points[end_point].single value is the name of the single end_point in config.resource.sources
         sendResource(req, res, config.resource.sources[config.api.end_points[end_point].source] + "\\" + req.params[config.api.end_points[end_point].single], 200);
       });
     }
@@ -69,14 +70,23 @@ function createEndPoints(end_point)
     app.post(config.api.url + config.api.end_points[end_point].url, function(req, res)
     {
       var category = config.api.end_points[end_point].log_category;
-      if(log4jsApi.getLogger(category)[category] != undefined && typeof log4jsApi.getLogger(category)[category] == 'function')
-        log4jsApi.getLogger(category)[category](req.body.content);
-      buildAndSendResourcesList(req, res, config.resource.sources[config.api.end_points[end_point].source], 204);
+      var categoryLogger = log4jsApi.getLogger(category);
+      if(categoryLogger[category] != undefined && typeof categoryLogger[category] == 'function')
+      {
+        categoryLogger[category](req.body.content);
+      }
+      else
+      {
+        //TO DO
+      }
+
+      var resourceLinks = buildResourcesLinks(req, res, config.resource.sources[config.api.end_points[end_point].source]);
+      res.status(204).json(resourceLinks);
     })
   }
 }
 
-function buildAndSendResourcesList(req, res, source, status)
+function buildResourcesLinks(req, res, source)
 {
   var resourceLinks = getResourceLink(req);
 
@@ -90,7 +100,6 @@ function buildAndSendResourcesList(req, res, source, status)
       var link = {"rel": list[count], "href": getRequestUrl(req, list[count])};
       resourceLinks._links.push(link);
     };
-    res.status(status).json(resourceLinks);
   })
   .catch(function(err)
   {

@@ -29,17 +29,61 @@ The configuration file is http-logger-config.json, in the "config" folder. It ha
     - "source": the source name as listed in resource (es: "errors")
 
 ## Usage
-```sh
-1) Start Node => Node index.js
-2) From your third apps, send your log requests to http-logger, using the end points previously configured; es.
-{
-  "uri": "http://your-url:8080/api/errors",
-  "method": "POST",
-  "json": {
-    "content": your_error_content
-  }
-}
-```
+
+1) Start Node =>
+    ```sh
+    node index.js
+    ```
+2) From your third apps, send your log requests to http-logger, using the end points configured in http-logger-config.json;
+<br />i.e. posting (create) an error string
+    ```sh
+    const request = require('request');
+
+    var your_error_string = "Any string that would come from exceptions or errors";
+    var httpLoggerPost =
+    {
+      "uri": "http://your-url/api/errors",
+      "method": "POST",
+      "json": {
+        "content": your_error_string
+      }
+    }
+
+    request(httpLoggerPost, function (error, response)
+    {
+      // do what you need;
+    });
+    ```
+    <br />i.e. getting all debugs resources
+    ```sh
+    var httpLoggerGet =
+    {
+      "uri": "http://your-url/api/debugs",
+      "method": "GET"
+    }
+
+    request(httpLoggerGet, function (error, response)
+    {
+      // the response.body contains a list of "_links"; each "link" contains the resource name ("rel") and its full-url end point ("href")
+      var links = JSON.parse(response.body)._links;
+      for (var link of links)
+      {
+        // use the link, i.e. for sending another get request
+      }
+    });
+    ```
+    <br />i.e. getting a specific resource (a single file)
+    ```sh
+    var httpLoggerSingleGet =
+    {
+      "uri": "http://your-url/api/debugs/debug.2017-10-19.log",
+      "method": "GET"
+    }
+
+    request(httpLoggerSingleGet, function (error, response)
+    {
+      // the response is the file content
+    });
 
 ### Dependencies
 

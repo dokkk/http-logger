@@ -19,8 +19,8 @@
     "base": "C:\\xampp\\htdocs\\http-logger\\logs_api",
     "sources":
     {
-      "errors": "/errors",
-      "debugs": "/debugs"
+      "errors": "\\errors",
+      "debugs": "\\debugs"
     }
   },
   "api":
@@ -32,6 +32,7 @@
       "errors":
       {
         "url": "/errors",
+        "single": "error",
         "verbs": ["GET", "POST"],
         "log_category": "error",
         "source": "errors"
@@ -39,6 +40,7 @@
       "debugs":
       {
         "url": "/debugs",
+        "single": "debug",
         "verbs": ["GET", "POST"],
         "log_category": "debug",
         "source": "debugs"

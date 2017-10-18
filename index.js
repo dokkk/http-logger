@@ -51,8 +51,17 @@ function createEndPoints(end_point)
     app.get(config.api.url + config.api.end_points[end_point].url, function(req, res)
     {
       //config.api.end_points[end_point].source value is the end_point in config.resource.sources
-      buildAndSendResources(req, res, config.resource.sources[config.api.end_points[end_point].source], 200);
-    })
+      buildAndSendResourcesList(req, res, config.resource.sources[config.api.end_points[end_point].source], 200);
+    });
+
+    if(config.api.end_points[end_point].single)
+    {
+      app.get(config.api.url + config.api.end_points[end_point].url + "/:" + config.api.end_points[end_point].single, function(req, res)
+      {
+        //config.api.end_points[end_point].source value is the end_point in config.resource.sources
+        sendResource(req, res, config.resource.sources[config.api.end_points[end_point].source] + "\\" + req.params[config.api.end_points[end_point].single], 200);
+      });
+    }
   }
 
   if(config.api.end_points[end_point].verbs.indexOf("POST") > -1)
@@ -62,16 +71,16 @@ function createEndPoints(end_point)
       var category = config.api.end_points[end_point].log_category;
       if(log4jsApi.getLogger(category)[category] != undefined && typeof log4jsApi.getLogger(category)[category] == 'function')
         log4jsApi.getLogger(category)[category](req.body.content);
-      buildAndSendResources(req, res, config.resource.sources[config.api.end_points[end_point].source], 204);
+      buildAndSendResourcesList(req, res, config.resource.sources[config.api.end_points[end_point].source], 204);
     })
   }
 }
 
-function buildAndSendResources(req, res, source, status)
+function buildAndSendResourcesList(req, res, source, status)
 {
   var resourceLinks = getResourceLink(req);
 
-  getResources(config.resource.base + "\\" + source)
+  getResourcesList(config.resource.base + source)
   .then(function(list)
   {
     var resourceLinks = getResourceLink(req);
@@ -90,6 +99,24 @@ function buildAndSendResources(req, res, source, status)
   });
 }
 
+function sendResource(req, res, source, status)
+{
+  try
+  {
+    res.set('Content-Type', 'text/plain');
+    res.sendFile(config.resource.base + source, function (err)
+    {
+      if(err)
+        throw new Error(err);
+    });
+  }
+  catch(err)
+  {
+    logger.error(err);
+    res.status(500).json({error: "An error occurred"});
+  };
+}
+
 function getRequestUrl(req, relativeUrl = null)
 {
   var fullUrl = url.format({
@@ -99,7 +126,7 @@ function getRequestUrl(req, relativeUrl = null)
   });
 
   if(relativeUrl != null)
-    fullUrl = url.resolve(fullUrl + "/", relativeUrl)
+    fullUrl = url.resolve(fullUrl + "\\", relativeUrl)
 
   return fullUrl;
 }
@@ -109,7 +136,7 @@ function getResourceLink(req)
   return {"_links": [{"rel": "self", "href": getRequestUrl(req)}]};
 }
 
-function getResources(source)
+function getResourcesList(source)
 {
   //TO DO generalize source (es: filesystem, db, etc)?
   var fs = require('fs');
@@ -121,7 +148,6 @@ function getResources(source)
       {
         fs.readdir(source, function(err, items)
         {
-          var files = [];
           if(err)
             throw new Error(err);
 
@@ -130,6 +156,7 @@ function getResources(source)
       }
       else
       {
+        //TO DO manage !stats.isDirectory()
         reject(err);
       }
     });
